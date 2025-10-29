@@ -55,6 +55,8 @@ class _OpenAIEmbeddingInput(BaseModel):
     encoding_format: EmbeddingEncodingFormat = EmbeddingEncodingFormat.float
     user: Optional[str] = None
     dimensions: int = 0
+    prompt: Optional[str] = None
+    prompt_name: Optional[str] = None
 
 
 class _OpenAIEmbeddingInput_Text(_OpenAIEmbeddingInput):

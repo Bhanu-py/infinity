@@ -150,12 +150,18 @@ class BatchHandler:
             )
 
     async def embed(
-        self, sentences: list[str], matryoshka_dim: Optional[int] = None
+        self,
+        sentences: list[str],
+        matryoshka_dim: Optional[int] = None,
+        prompt: Optional[str] = None,
+        prompt_name: Optional[str] = None,
     ) -> tuple[list["EmbeddingReturnType"], int]:
         """Schedule a sentence to be embedded. Awaits until embedded.
 
         Args:
             sentences (list[str]): Sentences to be embedded
+            prompt (str, optional): Instruction prompt
+            prompt_name (str, optional): Named prompt
 
         Raises:
             ModelNotDeployedError: If loaded model does not expose `embed`
@@ -169,7 +175,8 @@ class BatchHandler:
             raise ModelNotDeployedError(
                 "the loaded moded cannot fullyfill `embed`. " f"Options are {self.capabilities}."
             )
-        input_sentences = [EmbeddingSingle(sentence=s) for s in sentences]
+        # Pass prompt and prompt_name to EmbeddingSingle if needed
+        input_sentences = [EmbeddingSingle(sentence=s, prompt=prompt, prompt_name=prompt_name) for s in sentences]
 
         embeddings, usage = await self._schedule(input_sentences)
         return matryososka_slice(embeddings, matryoshka_dim), usage
