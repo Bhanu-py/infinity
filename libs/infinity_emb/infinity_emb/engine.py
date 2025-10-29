@@ -328,7 +328,13 @@ class AsyncEngineArray:
             await engine.astop()
 
     async def embed(
-        self, *, model: str, sentences: list[str], matryoshka_dim: Optional[int] = None
+        self,
+        *,
+        model: str,
+        sentences: list[str],
+        matryoshka_dim: Optional[int] = None,
+        prompt: str | None = None,
+        prompt_name: str | None = None,
     ) -> tuple[list["EmbeddingReturnType"], int]:
         """embed multiple sentences
 
@@ -336,6 +342,8 @@ class AsyncEngineArray:
             model (str): model name to be used
             sentences (list[str]): sentences to be embedded
             matryoshka_dim (int): Length of matryoshka embedding
+            prompt (str, optional): Instruction prompt
+            prompt_name (str, optional): Named prompt
 
         Raises:
             ValueError: raised if engine is not started yet
@@ -347,7 +355,12 @@ class AsyncEngineArray:
                 2D list-array of shape( len(sentences),embed_dim )
             int: token usage
         """
-        return await self[model].embed(sentences, matryoshka_dim=matryoshka_dim)
+        return await self[model].embed(
+            sentences=sentences,
+            matryoshka_dim=matryoshka_dim,
+            prompt=prompt,
+            prompt_name=prompt_name,
+        )
 
     def is_running(self) -> bool:
         return all(engine.is_running for engine in self.engines_dict.values())
