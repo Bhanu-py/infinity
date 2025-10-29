@@ -213,8 +213,11 @@ class AbstractSingle(ABC):
 
 
 @dataclass(**dataclass_args)
+@dataclass(**dataclass_args)
 class EmbeddingSingle(AbstractSingle):
     sentence: str
+    prompt: str = None
+    prompt_name: str = None
 
     def str_repr(self) -> str:
         return self.sentence

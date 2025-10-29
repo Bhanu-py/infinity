@@ -1,3 +1,29 @@
+    def embed_with_instructions(self, input_texts, model="default/not-specified", encoding_format=None, user=None, dimensions=0, prompt=None, prompt_name=None, modality="text", **kwargs):
+        """
+        Helper to send embedding requests with optional prompt or prompt_name (instructions).
+        Example:
+            client.embed_with_instructions([
+                "A cat on a mat.", "A dog in the park."
+            ], model="my/instruction-model", prompt="Represent the sentence for retrieval.")
+        """
+        from .models.open_ai_embedding_input_text import OpenAIEmbeddingInputText
+        payload = OpenAIEmbeddingInputText(
+            input_=input_texts,
+            model=model,
+            encoding_format=encoding_format,
+            user=user,
+            dimensions=dimensions,
+            modality=modality,
+        )
+        if prompt is not None:
+            payload["prompt"] = prompt
+        if prompt_name is not None:
+            payload["prompt_name"] = prompt_name
+        # Add any extra fields
+        for k, v in kwargs.items():
+            payload[k] = v
+        from .api.default.embeddings import sync
+        return sync(client=self, body=payload)
 import ssl
 from typing import Any, Dict, Optional, Union
 

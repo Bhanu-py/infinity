@@ -132,13 +132,19 @@ class AsyncEmbeddingEngine:
         return self._engine_args
 
     async def embed(
-        self, sentences: list[str], matryoshka_dim: int | None = None
+        self,
+        sentences: list[str],
+        matryoshka_dim: int | None = None,
+        prompt: str | None = None,
+        prompt_name: str | None = None,
     ) -> tuple[list["EmbeddingReturnType"], int]:
         """embed multiple sentences
 
         Kwargs:
             sentences (list[str]): sentences to be embedded
             matryoshka_dim (int): Length of matryoshka embedding
+            prompt (str, optional): Instruction prompt
+            prompt_name (str, optional): Named prompt
 
         Raises:
             ValueError: raised if engine is not started yet
@@ -153,7 +159,10 @@ class AsyncEmbeddingEngine:
 
         self._assert_running()
         embeddings, usage = await self._batch_handler.embed(
-            sentences=sentences, matryoshka_dim=matryoshka_dim
+            sentences=sentences,
+            matryoshka_dim=matryoshka_dim,
+            prompt=prompt,
+            prompt_name=prompt_name,
         )
         return embeddings, usage
 

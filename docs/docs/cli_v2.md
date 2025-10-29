@@ -1,3 +1,19 @@
+## Embedding with Instructions (prompt/prompt_name)
+
+You can pass an instruction prompt or prompt_name to supported models:
+
+```python
+from infinity_client import Client
+client = Client(base_url="http://localhost:7997/")
+result = client.embed_with_instructions(
+	["A cat on a mat.", "A dog in the park."],
+	model="my/instruction-model",
+	prompt="Represent the sentence for retrieval."
+)
+print(result)
+```
+
+This will forward the `prompt` to the backend, enabling instruction-based embedding models.
 # CLI v2 Documentation
 
 The current version of Infinity uses the following arguments in its CLI:

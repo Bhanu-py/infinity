@@ -335,6 +335,10 @@ def create_server(
         data_root = data.root
         engine = _resolve_engine(data_root.model)
 
+        # Extract prompt and prompt_name if present
+        prompt = getattr(data_root, "prompt", None)
+        prompt_name = getattr(data_root, "prompt_name", None)
+
         try:
             start = time.perf_counter()
             if modality == Modality.text:
@@ -347,7 +351,10 @@ def create_server(
                     len(input_),  # type: ignore
                 )
                 embedding, usage = await engine.embed(
-                    sentences=input_, matryoshka_dim=data_root.dimensions
+                    sentences=input_,
+                    matryoshka_dim=data_root.dimensions,
+                    prompt=prompt,
+                    prompt_name=prompt_name,
                 )
             elif modality == Modality.audio:
                 urls_or_bytes = _resolve_mixed_input(data_root.input)  # type: ignore
