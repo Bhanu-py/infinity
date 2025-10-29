@@ -176,9 +176,26 @@ class BatchHandler:
                 "the loaded moded cannot fullyfill `embed`. " f"Options are {self.capabilities}."
             )
         # Pass prompt and prompt_name to EmbeddingSingle if needed
-        input_sentences = [EmbeddingSingle(sentence=s, prompt=prompt, prompt_name=prompt_name) for s in sentences]
+        input_singles = [EmbeddingSingle(sentence=s, prompt=prompt, prompt_name=prompt_name) for s in sentences]
 
-        embeddings, usage = await self._schedule(input_sentences)
+        # --- INSTRUCTION INJECTION LOGIC ---
+        # If prompt or prompt_name is set, combine with sentence before embedding
+        PROMPT_TEMPLATES = {
+            "retrieval": "Given a web search query, retrieve relevant passages that answer the query",
+            "classification": "Classify the following text.",
+            # Add more as needed
+        }
+        model_inputs = []
+        for es in input_singles:
+            if es.prompt:
+                # Use the detailed instruct template for queries
+                model_inputs.append(f"Instruct: {es.prompt}\nQuery:{es.sentence}")
+            elif es.prompt_name and es.prompt_name in PROMPT_TEMPLATES:
+                model_inputs.append(f"Instruct: {PROMPT_TEMPLATES[es.prompt_name]}\nQuery:{es.sentence}")
+            else:
+                model_inputs.append(es.sentence)
+
+        embeddings, usage = await self._schedule([EmbeddingSingle(sentence=s) for s in model_inputs])
         return matryososka_slice(embeddings, matryoshka_dim), usage
 
     async def rerank(
